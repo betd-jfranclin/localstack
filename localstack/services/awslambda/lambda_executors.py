@@ -531,14 +531,27 @@ class LambdaExecutorSeparateContainers(LambdaExecutorContainers):
             ) % (entrypoint, env_vars_string, network_str, runtime, command, lambda_cwd)
         else:
             lambda_cwd_on_host = self.get_host_path_for_path_in_docker(lambda_cwd)
-            cmd = (
-                'docker run'
-                '%s -v "%s":/var/task'
-                ' %s'
-                ' %s'  # network
-                ' --rm'
-                ' "lambci/lambda:%s" %s'
-            ) % (entrypoint, lambda_cwd_on_host, env_vars_string, network_str, runtime, command)
+            if LAMBDA_RUNTIME_CUSTOM_RUNTIME == runtime:
+                print(lambda_cwd_on_host)
+                lambda_layer = lambda_cwd_on_host + '/layer'
+                cmd = (
+                    'docker run'
+                    '%s -v "%s":/var/task'
+                    ' -v %s:/opt'
+                    ' %s'
+                    ' %s'  # network
+                    ' --rm'
+                    ' "lambci/lambda:%s" %s'
+                ) % (entrypoint, lambda_cwd_on_host, lambda_layer, env_vars_string, network_str, runtime, command)
+            else:
+                cmd = (
+                    'docker run'
+                    '%s -v "%s":/var/task'
+                    ' %s'
+                    ' %s'  # network
+                    ' --rm'
+                    ' "lambci/lambda:%s" %s'
+                ) % (entrypoint, lambda_cwd_on_host, env_vars_string, network_str, runtime, command)
         return cmd
 
     def get_host_path_for_path_in_docker(self, path):
