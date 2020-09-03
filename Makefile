@@ -1,8 +1,8 @@
-IMAGE_NAME ?= localstack/localstack
+IMAGE_NAME ?= jfranclinbd/localstack
 IMAGE_NAME_BASE ?= localstack/java-maven-node-python
 IMAGE_NAME_LIGHT ?= localstack/localstack-light
 IMAGE_NAME_FULL ?= localstack/localstack-full
-IMAGE_TAG ?= $(shell cat localstack/constants.py | grep '^VERSION =' | sed "s/VERSION = ['\"]\(.*\)['\"].*/\1/")
+IMAGE_TAG ?= 0.11.4-lambdhack
 VENV_DIR ?= .venv
 PIP_CMD ?= pip
 TEST_PATH ?= .
@@ -47,7 +47,7 @@ infra:             ## Manually start the local infrastructure for testing
 	($(VENV_RUN); exec bin/localstack start --host)
 
 docker-build:      ## Build Docker image
-	docker build -t $(IMAGE_NAME) .
+	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
 
 docker-squash:
 	# squash entire image

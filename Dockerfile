@@ -80,8 +80,3 @@ RUN ES_BASE_DIR=localstack/infra/elasticsearch; \
 # set library path
 ENV LD_LIBRARY_PATH=/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64/server
 
-# run tests (to verify the build before pushing the image)
-ADD tests/ tests/
-RUN LAMBDA_EXECUTOR=local make test
-# clean up temporary files created during test execution
-RUN rm -rf /tmp/localstack/*elasticsearch* /tmp/localstack.* tests/ /root/.npm/*cache
